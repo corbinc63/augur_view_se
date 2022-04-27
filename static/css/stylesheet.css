@@ -204,6 +204,19 @@ img[id^="report_image_"]:hover {filter: brightness(50%);}
     animation-delay: 1s;
 }
 
+#add_repo1{
+    left: 15px;
+    width: 400px;
+}
+#add_repo2{
+    left: 15px;
+    width: 400px;
+}
+
+.chart_div{
+    margin: 10px;
+}
+
 @keyframes dotFlashing {
     0% {
         background-color: #9880ff;

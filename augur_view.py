@@ -114,7 +114,7 @@ def status_view():
 
 @app.route('/reports')
 def show_reports():
-    return render_template('index.html', body="reports.html", title = "Reports")
+    return render_template('index.html', body="reports", title = "Reports")
 
 """ ----------------------------------------------------------------
 report page:
