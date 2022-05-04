@@ -207,10 +207,14 @@ img[id^="report_image_"]:hover {filter: brightness(50%);}
 #add_repo1{
     left: 15px;
     width: 400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 #add_repo2{
     left: 15px;
     width: 400px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .chart_div{

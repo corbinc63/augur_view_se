@@ -116,6 +116,36 @@ def status_view():
 def show_reports():
     return render_template('index.html', body="reports", title = "Reports")
 
+
+@app.route('/get_repo_id_by_name/<repo_name>')
+def get_repo_id(repo_name):
+
+    def get_item(collection, key, target):
+        return next((item for item in collection if item[key] == target), None)
+
+    data_list = requestJson("repos")
+
+    data_piece = get_item(data_list, 'repo_name', repo_name)
+
+    if data_piece is None:
+
+        return jsonify({"error": 1})
+    
+    repo_id = data_piece['repo_id']
+
+    return jsonify({"repo_id": repo_id, "error": 0})
+
+@app.route('/get_repo_names')
+def get_repo_names():
+
+    data_list = requestJson("repos")
+
+    list_of_repo_names = []
+
+    for data in data_list:
+        list_of_repo_names.append(data['repo_name'])
+
+    return jsonify(list_of_repo_names)
 """ ----------------------------------------------------------------
 report page:
     This route returns a report view of the requested repo (by ID).
