@@ -125,13 +125,12 @@
     google.charts.load("current", { packages: ["corechart"] });
     //google.charts.setOnLoadCallback(drawChart1);
     const emptyJSON = [['Date'],
-    ['2018-01'],
-    ['2018-02'],
-    ['2018-03'],
-    ['2018-04'],
-    ['2018-05'],
-    ['2018-06'],
-    ['2018-07'],]
+    ['2021-01'],
+    ['2021-04'],
+    ['2021-07'],
+    ['2021-10'],
+    ['2022-01'],
+    ['2022-04'],]
 
     window.localStorage.setItem('chartdata1', JSON.stringify(emptyJSON))
     window.localStorage.setItem('chartdata2', JSON.stringify(emptyJSON))
@@ -172,7 +171,7 @@
         data = getRepoInfoNewContributors(repoName)
         data = JSON.parse(window.localStorage.getItem('chartdata1'));
         var i = 0
-        while (1 < data.length) {
+        while (i < data.length) {
             data[i].push(data[i].count);
             i++
         }
