@@ -1,234 +1,251 @@
 <div id="add_repo1">
-    <p1>First Time Contributors of Repositories</p1>
-    <div class="input-group mb-3">
-        <select name="select_box" id="select_box" class="form-select select_box" >
-            
-        </select>
-        <div class="input-group-append">
-            <button onclick="addRepo1()" id="add_repo_button1" class="btn btn-light btn-outline-secondary"
-                type="button">Add Repo</button>
-        </div>
+  <p1 class="title_for_section">First Time Contributors of Repositories</p1>
+  <div class="input-group mb-3">
+    <select
+      name="select_box"
+      id="select_box"
+      class="form-select select_box"
+    ></select>
+    <div class="input-group-append">
+      <button
+        onclick="addRepo1()"
+        id="add_repo_button1"
+        class="btn btn-light btn-outline-secondary"
+        type="button"
+      >
+        Add Repo
+      </button>
     </div>
+  </div>
 </div>
-<div id="chart_div1" class="chart_div">
-
-</div>
-<div id="included_repos1">
-</div>
+<div id="chart_div1" class="chart_div"></div>
+<div id="included_repos1"></div>
 
 <div id="add_repo2">
-    <p1>Repeat First Time Contributors</p1>
-    <div class="input-group mb-3">
-        <select name="select_box" id="select_box2" class="form-select select_box">
-        
-        </select>
-        <div class="input-group-append">
-            <button onclick="addRepo2()" id="add_repo_button2" class="btn btn-light btn-outline-secondary"
-                type="button">Add Repo</button>
-        </div>
+  <p1 class="title_for_section">Repeat First Time Contributors</p1>
+  <div class="input-group mb-3">
+    <select
+      name="select_box"
+      id="select_box2"
+      class="form-select select_box"
+    ></select>
+    <div class="input-group-append">
+      <button
+        onclick="addRepo2()"
+        id="add_repo_button2"
+        class="btn btn-light btn-outline-secondary"
+        type="button"
+      >
+        Add Repo
+      </button>
     </div>
+  </div>
 </div>
-<div id="chart_div2" class="chart_div">
+<div id="chart_div2" class="chart_div"></div>
+<div id="included_repos2"></div>
 
-</div>
-<div id="included_repos2">
-</div>
-
-
-<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script
+  type="text/javascript"
+  src="https://www.gstatic.com/charts/loader.js"
+></script>
 
 <script type="text/javascript">
-    const repos_url = ''
+  const repos_url = "";
 
-    async function getRepoIDbyName(reponame) {
+  async function getRepoIDbyName(reponame) {
+    const repos_url =
+      location.protocol +
+      "//" +
+      location.host +
+      "/get_repo_id_by_name/" +
+      reponame;
 
-        const repos_url = location.protocol + '//' + location.host + '/get_repo_id_by_name/' + reponame
+    console.log(repos_url);
+    const response = await fetch(repos_url);
+    const repo_id_data = await response.json();
 
-        console.log(repos_url)
-        const response = await fetch(repos_url);
-        const repo_id_data = await response.json();
+    if (repo_id_data["error"] == 1) {
+      return null;
+    }
 
-        if (repo_id_data["error"] == 1) {
-            return null;
-        }
+    return repo_id_data["repo_id"];
+  }
 
-        return repo_id_data['repo_id']
+  async function getRepoInfoNewContributors(reponame) {
+    const repoID = await getRepoIDbyName(reponame);
+
+    if (repoID == null) {
+      console.log("Invalid repo name");
+      // Notify user with modal
+      return;
+    }
+
+    const url =
+      "http://chaoss.tv:5210/api/unstable/contributor_reports/new_contributors_bar/?return_data=true&repo_id=" +
+      repoID;
+
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(data["1_All"]);
+    return data["1_All"];
+  }
+  async function getRepoInfoRepeatContributors(reponame) {
+    const repoID = await getRepoIDbyName(reponame);
+
+    if (repoID == null) {
+      console.log("Invalid repo name");
+      // Notify user with modal
+      return;
+    }
+
+    const url =
+      "http://chaoss.tv:5210/api/unstable/contributor_reports/new_contributors_bar/?return_data=true&repo_id=" +
+      repoID;
+
+    const response = await fetch(url);
+    const data = await response.json();
+    console.log(data["1_repeat"]);
+    return data["1_repeat"];
+  }
+
+  //This populates a select option with repo names
+  const url = location.protocol + "//" + location.host + "/get_repo_names";
+  var select = document.getElementById("select_box");
+  select.length = 0;
+  let defaultOption = document.createElement("option");
+  defaultOption.text = "Choose Repo";
+  defaultOption.value = "";
+  defaultOption.disabled = true;
+  defaultOption.selected;
+  select.add(defaultOption);
+  select.selectedIndex = 0;
+  var select2 = document.getElementById("select_box2");
+  select2.length = 0;
+  let defaultOption2 = document.createElement("option");
+  defaultOption2.text = "Choose Repo";
+  defaultOption2.value = "";
+  defaultOption2.disabled = true;
+  defaultOption2.selected;
+  select2.add(defaultOption2);
+  select2.selectedIndex = 0;
+  const request = new XMLHttpRequest();
+  request.open("GET", url, true);
+
+  request.onload = function () {
+    const data = JSON.parse(request.responseText);
+    let option;
+    console.log(data);
+    for (let i = 0; i < data.length; i++) {
+      option = document.createElement("option");
+      option.text = data[i];
+      option.value = data[i];
+      option2 = document.createElement("option");
+      option2.text = data[i];
+      option2.value = data[i];
+      select.add(option);
+      select2.add(option2);
+    }
+  };
+  request.send();
+
+  // getRepos();
+  // getRepoIDbyName('amazon-freertos');
+  // getRepoInfoNewContributors('amazon-freetos')
+
+  google.charts.load("current", { packages: ["corechart"] });
+  //google.charts.setOnLoadCallback(drawChart1);
+  const emptyJSON = [
+    ["Date"],
+    ["2021-01"],
+    ["2021-04"],
+    ["2021-07"],
+    ["2021-10"],
+    ["2022-01"],
+    ["2022-04"],
+  ];
+
+  window.localStorage.setItem("chartdata1", JSON.stringify(emptyJSON));
+  window.localStorage.setItem("chartdata2", JSON.stringify(emptyJSON));
+
+  function drawChart1() {
+    var array = [];
+    array = JSON.parse(window.localStorage.getItem("chartdata1"));
+
+    var data = google.visualization.arrayToDataTable(array);
+
+    var options = {
+      title: "First Time Contributors of Repositories",
+      curveType: "function",
+      vAxis: { title: "Contributors" },
+      hAxis: { title: "Date" },
+      seriesType: "bars",
+      series: { 9999: { type: "line" } },
     };
+    window.localStorage.setItem("chartdata1", JSON.stringify(array));
+    var chart = new google.visualization.ComboChart(
+      document.getElementById("chart_div1")
+    );
+    chart.draw(data, options);
+  }
 
-
-
-    async function getRepoInfoNewContributors(reponame) {
-
-        const repoID = await getRepoIDbyName(reponame);
-
-        if (repoID == null) {
-            console.log("Invalid repo name")
-            // Notify user with modal
-            return;
-        }
-
-        const url = 'http://chaoss.tv:5210/api/unstable/contributor_reports/new_contributors_bar/?return_data=true&repo_id=' + repoID;
-
-        const response = await fetch(url);
-        const data = await response.json();
-        console.log(data['1_All'])
-        return(data)
-
+  async function addRepo1() {
+    var repoName = document.getElementById("select_box").value;
+    var data2 = await getRepoInfoNewContributors(repoName);
+    var data = JSON.parse(window.localStorage.getItem("chartdata1"));
+    var i = 0;
+    console.log(data);
+    data[0].push(repoName);
+    while (i < data2.length) {
+      data[i + 1].push(data2[i].count);
+      i++;
     }
+    window.localStorage.setItem("chartdata1", JSON.stringify(data));
+    drawChart1();
+    var included = document.getElementById("included_repos1");
+    var node = document.createTextNode(
+      "<button>Remove " + repoName + "<button>"
+    );
+    //included.appendChild(node);
+  }
 
-    //This populates a select option with repo names
-    const url = location.protocol + '//' + location.host + '/get_repo_names';
-    var select = document.getElementById('select_box');
-    select.length = 0;
-    let defaultOption = document.createElement('option');
-    defaultOption.text = 'Choose Repo';
-    defaultOption.value = '';
-    defaultOption.disabled = true;
-    defaultOption.selected;
-    select.add(defaultOption);
-    select.selectedIndex = 0;
-    var select2 = document.getElementById('select_box2');
-    select2.length = 0;
-    let defaultOption2 = document.createElement('option');
-    defaultOption2.text = 'Choose Repo';
-    defaultOption2.value = '';
-    defaultOption2.disabled = true;
-    defaultOption2.selected;
-    select2.add(defaultOption2);
-    select2.selectedIndex = 0;
-    const request = new XMLHttpRequest();
-    request.open('GET',url,true);
+  function drawChart2() {
+    var array = [];
+    array = JSON.parse(window.localStorage.getItem("chartdata2"));
 
-    request.onload = function(){
-        const data = JSON.parse(request.responseText);
-        let option;
-        console.log(data)
-        for (let i =0; i<data.length;i++){
-            option = document.createElement('option')
-            option.text = data[i];
-            option.value = data[i];
-            option2 = document.createElement('option')
-            option2.text = data[i];
-            option2.value = data[i];
-            select.add(option)
-            select2.add(option2)
-            
-        }
-        
+    var data = google.visualization.arrayToDataTable(array);
+
+    var options = {
+      title: "Repeat First Time Contributors",
+      curveType: "function",
+      vAxis: { title: "Contributors" },
+      hAxis: { title: "Date" },
+      seriesType: "bars",
+      series: { 9999: { type: "line" } },
+    };
+    window.localStorage.setItem("chartdata2", JSON.stringify(array));
+    var chart = new google.visualization.ComboChart(
+      document.getElementById("chart_div2")
+    );
+    chart.draw(data, options);
+  }
+
+  async function addRepo2() {
+    var repoName = document.getElementById("select_box2").value;
+    var data2 = await getRepoInfoRepeatContributors(repoName);
+    var data = JSON.parse(window.localStorage.getItem("chartdata2"));
+    var i = 0;
+    console.log(data);
+    data[0].push(repoName);
+    while (i < data2.length) {
+      data[i + 1].push(data2[i].count);
+      i++;
     }
-    request.send();
-
-    // getRepos();
-    // getRepoIDbyName('amazon-freertos');
-    // getRepoInfoNewContributors('amazon-freetos')
-
-    google.charts.load("current", { packages: ["corechart"] });
-    //google.charts.setOnLoadCallback(drawChart1);
-    const emptyJSON = [['Date'],
-    ['2021-01'],
-    ['2021-04'],
-    ['2021-07'],
-    ['2021-10'],
-    ['2022-01'],
-    ['2022-04'],]
-
-    window.localStorage.setItem('chartdata1', JSON.stringify(emptyJSON))
-    window.localStorage.setItem('chartdata2', JSON.stringify(emptyJSON))
-
-    function drawChart1() {
-        /*var array = [
-          ['Date', 'REPO1', 'REPO2'],
-          ['2018-01',  190,      42],
-          ['2018-04',  176,      135],
-          ['2018-08',  45,      235],
-          ['2018-09',  17,      77],
-          ['2018-10',  154,      100],
-          ['2018-12',  1,      11],
-          ['2019-01',  200,      77],
-          ['2019-03',  111,      99],
-          ['2019-04',  33,      55],
-        ];*/
-        var array = []
-        array = JSON.parse(window.localStorage.getItem('chartdata1'))
-
-        var data = google.visualization.arrayToDataTable(array);
-
-        var options = {
-            title: 'First Time Contributors of Repositories',
-            curveType: "function",
-            vAxis: { title: "Contributors" },
-            hAxis: { title: "Date" },
-            seriesType: "bars",
-            series: { 9999: { type: "line" } }
-        };
-        window.localStorage.setItem('chartdata1', JSON.stringify(array))
-        var chart = new google.visualization.ComboChart(document.getElementById('chart_div1'));
-        chart.draw(data, options);
-    }
-
-    function addRepo1() {
-        var repoName = document.getElementById("select_box").value
-        var data2 = getRepoInfoNewContributors(repoName)
-        var data = JSON.parse(window.localStorage.getItem('chartdata1'));
-        console.log(data2);
-        var i = 0;
-        while (i < data2.length) {
-            
-            data[i].push(data2[i].count);
-            i++;
-        }
-        window.localStorage.setItem('chartdata1', JSON.stringify(data));
-        drawChart1()
-        var included = document.getElementById("included_repos1");
-        var node = document.createTextNode("<button>Remove " + repoName + "<button>")
-        //included.appendChild(node);
-    }
-
-    function drawChart2() {
-        /*var array = [
-          ['Date', 'REPO1', 'REPO2'],
-          ['2018-01',  190,      42],
-          ['2018-04',  176,      135],
-          ['2018-08',  45,      235],
-          ['2018-09',  17,      77],
-          ['2018-10',  154,      100],
-          ['2018-12',  1,      11],
-          ['2019-01',  200,      77],
-          ['2019-03',  111,      99],
-          ['2019-04',  33,      55],
-        ];*/
-        var array = []
-        array = JSON.parse(window.localStorage.getItem('chartdata2'))
-
-        var data = google.visualization.arrayToDataTable(array);
-
-        var options = {
-            title: 'First Time Contributors of Repositories',
-            curveType: "function",
-            vAxis: { title: "Contributors" },
-            hAxis: { title: "Date" },
-            seriesType: "bars",
-            series: { 9999: { type: "line" } }
-        };
-        window.localStorage.setItem('chartdata2', JSON.stringify(array))
-        var chart = new google.visualization.ComboChart(document.getElementById('chart_div2'));
-        chart.draw(data, options);
-    }
-
-    function addRepo2() {
-        var repoName = document.getElementById("repo_name2").value
-        var data = []
-        data = JSON.parse(window.localStorage.getItem('chartdata2'));
-        data[0].push(repoName)
-        var i = 1
-        while (i < data.length) {
-            data[i].push(Math.floor(Math.random() * 100) + 1);
-            i++
-        }
-        window.localStorage.setItem('chartdata2', JSON.stringify(data));
-        drawChart2()
-        var included = document.getElementById("included_repos2");
-        var node = document.createTextNode("<button>Remove " + repoName + "<button>")
-        //included.appendChild(node);
-    }
+    window.localStorage.setItem("chartdata2", JSON.stringify(data));
+    drawChart2();
+    var included = document.getElementById("included_repos2");
+    var node = document.createTextNode(
+      "<button>Remove " + repoName + "<button>"
+    );
+    //included.appendChild(node);
+  }
 </script>
