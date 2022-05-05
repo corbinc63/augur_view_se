@@ -72,7 +72,7 @@
         const response = await fetch(url);
         const data = await response.json();
         console.log(data['1_All'])
-        return(data['1_All'])
+        return(data)
 
     }
 
@@ -168,12 +168,14 @@
 
     function addRepo1() {
         var repoName = document.getElementById("select_box").value
-        data = getRepoInfoNewContributors(repoName)
-        data = JSON.parse(window.localStorage.getItem('chartdata1'));
-        var i = 0
-        while (i < data.length) {
-            data[i].push(data[i].count);
-            i++
+        var data2 = getRepoInfoNewContributors(repoName)
+        var data = JSON.parse(window.localStorage.getItem('chartdata1'));
+        console.log(data2);
+        var i = 0;
+        while (i < data2.length) {
+            
+            data[i].push(data2[i].count);
+            i++;
         }
         window.localStorage.setItem('chartdata1', JSON.stringify(data));
         drawChart1()
